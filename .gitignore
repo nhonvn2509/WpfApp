@@ -1,0 +1,82 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ARM/
+ARM64/
+
+# Thư mục sinh tự động khi kiểm thử khung xem trước
+SampleFiles/
+_buildcheck/
+_testcheck/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Rider / ReSharper
+.idea/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+.nuget/
+project.assets.json
+project.nuget.cache
+
+# Generated files
+Generated/
+TestResults/
+BenchmarkDotNet.Artifacts/
+
+# WPF generated files
+*.g.cs
+*.g.i.cs
+*.g.resources
+*.resources
+*.cache
+*.pdb
+*.dll
+*.exe
+*_wpftmp.csproj
+*_wpftmp.*
+
+# Logs
+*.log
+
+# Code coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Publish output
+publish/
+app.publish/
+*.pubxml.user
+
+# User-specific settings
+*.csproj.user
+*.vbproj.user
+*.fsproj.user
+
+# Database and local development files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlit
+.kilo
+/tool
+.clinerules
+/WpfApp/Assets/Maps/vietnam-south-china-sea-shortbread-1.0.mbtiles

@@ -1,0 +1,575 @@
+﻿<Window x:Class="WpfApp.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:settings="clr-namespace:WpfApp.ViewModel.Settings"
+        xmlns:iconPacks="clr-namespace:MahApps.Metro.IconPacks;assembly=MahApps.Metro.IconPacks.Lucide"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:presentation="clr-namespace:WpfApp.Presentation"
+        xmlns:controls="clr-namespace:WpfApp.Views.Controls"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Cài đặt — DeltaBat"
+        Icon="/Assets/VSAT.ico"
+        Width="900"
+        Height="620"
+        MinWidth="720"
+        MinHeight="520"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource RegionBrush}"
+        Foreground="{DynamicResource PrimaryTextBrush}"
+        FontFamily="Segoe UI"
+        Closing="SettingsWindow_Closing">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="40"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            ResizeBorderThickness="6"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <Style x:Key="SettingsFieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <Style x:Key="SettingsHint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource ThirdlyTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+        </Style>
+
+        <Style x:Key="SettingsTextBox" TargetType="hc:TextBox" BasedOn="{StaticResource TextBoxPlusBaseStyle}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="SettingsComboBox" TargetType="hc:ComboBox" BasedOn="{StaticResource ComboBoxPlusBaseStyle}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="SettingsButton" TargetType="Button" BasedOn="{StaticResource ButtonDefault}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="hc:IconElement.Width" Value="15" />
+            <Setter Property="hc:IconElement.Height" Value="15" />
+        </Style>
+
+        <Style x:Key="SettingsPrimaryButton" TargetType="Button" BasedOn="{StaticResource ButtonPrimary}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinWidth" Value="110" />
+            <Setter Property="Padding" Value="18,0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <controls:WindowCaptionBar x:Name="CaptionBar"
+                                   DockPanel.Dock="Top"
+                                   ShowMinimizeMaximize="False" />
+        <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Padding="18,14"
+                Background="{DynamicResource DarkRegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="DELTABAT"
+                               FontSize="17"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource DarkPrimaryBrush}" />
+                    <TextBlock Text="CÀI ĐẶT"
+                               FontSize="10"
+                               Foreground="{DynamicResource ThirdlyTextBrush}" />
+                </StackPanel>
+                <TextBlock HorizontalAlignment="Right"
+                           VerticalAlignment="Center"
+                           FontSize="11"
+                           Foreground="{DynamicResource ThirdlyTextBrush}">
+                    <Run Text="Phiên bản " /><Run Text="{Binding AppVersion, Mode=OneWay}" />
+                </TextBlock>
+            </Grid>
+        </Border>
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Sections}"
+                 SelectedValuePath="Section"
+                 SelectedValue="{Binding SelectedSection, Mode=TwoWay}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Padding="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="14,10" />
+                    <Setter Property="Margin" Value="8,2" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Bd"
+                                        Background="Transparent"
+                                        CornerRadius="7"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Stretch" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="#1FFFFFFF" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="#294C9AFF" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type settings:SettingsNavItem}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <iconPacks:PackIconLucide Grid.Column="0"
+                                                 Width="17"
+                                                 Height="17"
+                                                 Margin="0,0,10,0"
+                                                 VerticalAlignment="Center"
+                                                 Kind="{Binding Icon}"
+                                                 Foreground="{DynamicResource PrimaryBrush}" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding Title}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}" />
+                            <TextBlock Text="{Binding Description}"
+                                       FontSize="10"
+                                       Margin="0,2,0,0"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource ThirdlyTextBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+</ListBox>
+        <ContentControl Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="8,0"
+                        Content="{Binding}">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedSection}" Value="Connection">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,16,10,16">
+                                            <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+                                                <TextBlock Text="Kết nối cơ sở dữ liệu"
+                                                           FontSize="15"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,4,0,0"
+                                                           Text="Ứng dụng đọc dữ liệu từ SQL Server. Để trống ô dưới thì dùng chuỗi kết nối kèm theo bộ cài đặt." />
+
+                                                <TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,18,0,0"
+                                                           Text="Chuyển nhanh sang CSDL khác" />
+                                                <hc:ComboBox Style="{StaticResource SettingsComboBox}"
+                                                             Width="240"
+                                                             ItemsSource="{Binding DatabaseTargets}"
+                                                             SelectedItem="{Binding SelectedDatabaseTarget, Mode=TwoWay}"
+                                                             ToolTip="Chọn một CSDL dựng sẵn để điền vào ô chuỗi kết nối bên dưới" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,6,0,0"
+                                                           Text="Chọn xong chuỗi sẽ được điền vào ô bên dưới. Sửa tay ô đó thì ô chọn tự bỏ chọn." />
+
+                                                <TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,14,0,0"
+                                                           Text="Chuỗi kết nối (ghi đè)" />
+                                                <hc:TextBox Style="{StaticResource SettingsTextBox}"
+                                                            AcceptsReturn="True"
+                                                            TextWrapping="Wrap"
+                                                            Height="76"
+                                                            VerticalContentAlignment="Top"
+                                                            VerticalScrollBarVisibility="Auto"
+                                                            FontFamily="Consolas"
+                                                            Text="{Binding ConnectionString, UpdateSourceTrigger=PropertyChanged}" />
+                                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                                    <Button Command="{Binding TestConnectionCommand}">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button" BasedOn="{StaticResource SettingsButton}">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsTestingConnection}" Value="True">
+                                                                            <Setter Property="IsEnabled" Value="False" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Button.Style>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <iconPacks:PackIconLucide Kind="PlugZap"
+                                                                         Width="15"
+                                                                         Height="15" />
+                                                                <TextBlock Margin="7,0,0,0" Text="Kiểm tra kết nối" />
+                                                            </StackPanel>
+                                                        </Button>
+                                                    <Button Style="{StaticResource SettingsButton}"
+                                                            Command="{Binding RestoreDefaultsCommand}">
+                                                        <TextBlock Text="Xoá chuỗi ghi đè" />
+                                                    </Button>
+                                                </StackPanel>
+                                                <Border Margin="0,12,0,0"
+                                                        Padding="12,10"
+                                                        CornerRadius="7"
+                                                        Background="{DynamicResource SecondaryRegionBrush}"
+                                                        BorderBrush="{DynamicResource BorderBrush}"
+                                                        BorderThickness="1">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ConnectionTestText}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding ConnectionTestText}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Text="{Binding ConnectionTestText}"
+                                                               FontSize="12"
+                                                               TextWrapping="Wrap" />
+                                                </Border>
+
+                                                <TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,18,0,0"
+                                                           Text="Ứng dụng đang lấy chuỗi kết nối từ" />
+                                                <Border Padding="12,9" CornerRadius="7"
+                                                        Background="{DynamicResource SecondaryRegionBrush}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding EffectiveConnectionSource}"
+                                                                   FontSize="12"
+                                                                   FontWeight="SemiBold" />
+                                                        <TextBlock Style="{StaticResource SettingsHint}" Margin="0,4,0,0">
+                                                            <Run Text="Cấu hình kèm theo: " />
+                                                            <Run Text="{Binding DeploymentFileName, Mode=OneWay}" />
+                                                            <Run Text=". Chuỗi ở ô trên chỉ được dùng khi nguồn nêu trên là cấu hình người dùng." />
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Border>
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,6,0,0"
+                                                           Text="Đổi chuỗi kết nối cần khởi động lại ứng dụng thì mới dùng giá trị mới." />
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedSection}" Value="Files">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,16,10,16">
+                                            <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+                                                <TextBlock Text="Kho tệp tin"
+                                                           FontSize="15"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,4,0,0"
+                                                           Text="CSDL chỉ lưu tên tệp và thư mục. Ứng dụng ghép đường dẫn đầy đủ từ thư mục này với cột PATH của tệp." />
+
+                                                <TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,18,0,0"
+                                                           Text="Thư mục gốc trên đĩa" />
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <hc:TextBox Style="{StaticResource SettingsTextBox}"
+                                                                Text="{Binding FilesRootPath, UpdateSourceTrigger=PropertyChanged}" />
+                                                    <Button Grid.Column="1"
+                                                            Style="{StaticResource SettingsButton}"
+                                                            Margin="8,0,0,0"
+                                                            Command="{Binding BrowseFilesRootCommand}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <iconPacks:PackIconLucide Kind="FolderOpen"
+                                                                     Width="15"
+                                                                     Height="15" />
+                                                            <TextBlock Margin="7,0,0,0" Text="Duyệt..." />
+                                                        </StackPanel>
+                                                    </Button>
+                                                </Grid>
+
+                                                <Border Margin="0,8,0,0"
+                                                        Padding="12,9"
+                                                        CornerRadius="7"
+                                                        Background="{DynamicResource SecondaryRegionBrush}">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding FilesRootPath}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding FilesRootPath}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Text="{Binding FilesRootStatus}"
+                                                               FontSize="12"
+                                                               TextWrapping="Wrap" />
+                                                </Border>
+
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,14,0,0"
+                                                           Text="Thay đổi này có hiệu lực ngay, không cần khởi động lại ứng dụng." />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Text="Đường dẫn nào đã là đường dẫn tuyệt đối trong CSDL thì không bị thư mục gốc này thay đổi." />
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedSection}" Value="Tables">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,16,10,16">
+                                            <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+                                                <TextBlock Text="Bảng dữ liệu"
+                                                           FontSize="15"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,4,0,0"
+                                                           Text="Cỡ trang áp dụng cho bảng Phiên và bảng Nguồn khi ứng dụng khởi động." />
+
+                                                <TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,18,0,0"
+                                                           Text="Số dòng mỗi trang" />
+                                                <hc:ComboBox Style="{StaticResource SettingsComboBox}"
+                                                             ItemsSource="{Binding PageSizeOptions}"
+                                                             SelectedItem="{Binding PageSize, Mode=TwoWay}" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,10,0,0"
+                                                           Text="Trang càng nhiều dòng thì bấm sang trang sau càng chậm, vì SQL Server phải bỏ qua số dòng của các trang trước." />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Text="Cỡ trang này áp dụng cho tất cả bảng và cần khởi động lại ứng dụng thì mới có hiệu lực." />
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedSection}" Value="Appearance">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,16,10,16">
+                                            <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+                                                <TextBlock Text="Giao diện"
+                                                           FontSize="15"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,4,0,0"
+                                                           Text="Chọn màu sắc cho ứng dụng. Thay đổi có hiệu lực ngay, không cần khởi động lại." />
+
+                                                <ListBox Margin="0,14,0,0"
+                                                         Background="Transparent"
+                                                         BorderThickness="0"
+                                                         ItemsSource="{Binding Themes}"
+                                                         SelectedValuePath="Key"
+                                                         SelectedValue="{Binding ThemeKey, Mode=TwoWay}">
+                                                    <ListBox.ItemContainerStyle>
+                                                        <Style TargetType="ListBoxItem">
+                                                            <Setter Property="Padding" Value="8,6" />
+                                                            <Setter Property="Margin" Value="0,0,0,4" />
+                                                            <Setter Property="Cursor" Value="Hand" />
+                                                        </Style>
+                                                    </ListBox.ItemContainerStyle>
+                                                    <ListBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Border Width="34"
+                                                                        Height="34"
+                                                                        Margin="0,0,12,0"
+                                                                        CornerRadius="7"
+                                                                        BorderThickness="1"
+                                                                        BorderBrush="{DynamicResource BorderBrush}">
+                                                                    <Border.Background>
+                                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                            <GradientStop Color="{Binding RegionColor}" Offset="0" />
+                                                                            <GradientStop Color="{Binding AccentColor}" Offset="1" />
+                                                                        </LinearGradientBrush>
+                                                                    </Border.Background>
+                                                                </Border>
+                                                                <StackPanel VerticalAlignment="Center">
+                                                                    <TextBlock Text="{Binding DisplayName}"
+                                                                               FontSize="13"
+                                                                               FontWeight="SemiBold" />
+                                                                    <TextBlock Style="{StaticResource SettingsHint}"
+                                                                               Text="{Binding Description}" />
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ListBox.ItemTemplate>
+                                                </ListBox>
+
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,6,0,0"
+                                                           Text="Giao diện lưu vào tệp cấu hình người dùng nên giữ nguyên qua các lần nâng cấp ứng dụng." />
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedSection}" Value="About">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,16,10,16">
+                                            <StackPanel MaxWidth="560" HorizontalAlignment="Left">
+                                                <TextBlock Text="Giới thiệu"
+                                                           FontSize="15"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource PrimaryTextBrush}" />
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,4,0,0"
+                                                           Text="DeltaBat — không gian phân tích dữ liệu." />
+
+                                                <TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,18,0,0"
+                                                           Text="Thông tin phiên bản" />
+                                                <Border Padding="12,10" CornerRadius="7"
+                                                        Background="{DynamicResource SecondaryRegionBrush}">
+                                                    <StackPanel>
+                                                        <TextBlock FontSize="12">
+                                                            <Run Text="Phiên bản ứng dụng: " /><Run Text="{Binding AppVersion, Mode=OneWay}" Foreground="{DynamicResource PrimaryBrush}" />
+                                                        </TextBlock>
+                                                        <TextBlock Style="{StaticResource SettingsHint}" Margin="0,4,0,0">
+                                                            <Run Text="Môi trường: " /><Run Text="{Binding RuntimeDescription, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                        <TextBlock Style="{StaticResource SettingsHint}">
+                                                            <Run Text="Hệ điều hành: " /><Run Text="{Binding OperatingSystem, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Border>
+<TextBlock Style="{StaticResource SettingsFieldLabel}"
+                                                           Margin="0,18,0,0"
+                                                           Text="Nơi lưu cấu hình" />
+                                                <Border Padding="12,10" CornerRadius="7"
+                                                        Background="{DynamicResource SecondaryRegionBrush}">
+                                                    <StackPanel>
+                                                        <TextBlock Style="{StaticResource SettingsHint}"
+                                                                   Margin="0"
+                                                                   Text="Cấu hình người dùng (sửa được trong cửa sổ này):" />
+                                                        <TextBlock Text="{Binding SettingsFilePath, Mode=OneWay}"
+                                                                   FontSize="12"
+                                                                   Margin="0,4,0,0"
+                                                                   TextWrapping="Wrap" />
+                                                        <TextBlock Style="{StaticResource SettingsHint}"
+                                                                   Margin="0,10,0,0"
+                                                                   Text="Cấu hình kèm theo của bộ cài đặt (không sửa trong cửa sổ này):" />
+                                                        <TextBlock Text="{Binding DeploymentFileName, Mode=OneWay}"
+                                                                   FontSize="12"
+                                                                   Margin="0,4,0,0" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                                    <Button Style="{StaticResource SettingsButton}"
+                                                            Command="{Binding OpenSettingsFolderCommand}">
+                                                        <TextBlock Text="Mở thư mục cấu hình" />
+                                                    </Button>
+                                                    <Button Style="{StaticResource SettingsButton}"
+                                                            Command="{Binding ClearUserSettingsCommand}">
+                                                        <TextBlock Text="Xoá cấu hình người dùng" />
+                                                    </Button>
+                                                </StackPanel>
+                                                <TextBlock Style="{StaticResource SettingsHint}"
+                                                           Margin="0,10,0,0"
+                                                           Text="Cấu hình người dùng không nằm trong thư mục cài đặt, nên nâng cấp ứng dụng không làm mất tuỳ chọn này." />
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+        <Border Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Padding="18,12"
+                Background="{DynamicResource DarkRegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                    <Button HorizontalAlignment="Left"
+                            Style="{StaticResource SettingsButton}"
+                            Margin="0"
+                            Command="{Binding RestoreDefaultsCommand}">
+                        <TextBlock Text="Khôi phục mặc định" />
+                    </Button>
+                    <TextBlock Style="{StaticResource SettingsHint}"
+                               Margin="0,6,0,0"
+                               Text="Áp dụng sau khi khởi động lại ứng dụng."
+                               Visibility="{Binding NeedsRestart, Converter={StaticResource BoolToVisibility}}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SettingsButton}"
+                            Margin="0"
+                            Command="{Binding CloseCommand}"
+                            Content="Đóng" />
+                    <Button Style="{StaticResource SettingsPrimaryButton}"
+                            Margin="8,0,0,0"
+                            Command="{Binding SaveCommand}"
+                            Content="Lưu thay đổi" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+    </DockPanel>
+</Window>

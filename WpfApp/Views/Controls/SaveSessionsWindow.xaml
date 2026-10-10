@@ -1,0 +1,218 @@
+<Window x:Class="WpfApp.Views.Controls.SaveSessionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:controls="clr-namespace:WpfApp.Views.Controls"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Lưu phiên — DeltaBat"
+        Icon="/Assets/VSAT.ico"
+        Width="620"
+        Height="640"
+        MinWidth="520"
+        MinHeight="520"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource RegionBrush}"
+        Foreground="{DynamicResource PrimaryTextBrush}"
+        FontFamily="Segoe UI">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="40"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            ResizeBorderThickness="6"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <Style x:Key="SaveFieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <Style x:Key="SaveHint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource ThirdlyTextBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+
+        <Style x:Key="SaveTextBox" TargetType="hc:TextBox" BasedOn="{StaticResource TextBoxPlusBaseStyle}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="SaveComboBox" TargetType="hc:ComboBox" BasedOn="{StaticResource ComboBoxPlusBaseStyle}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="SaveCheckBox" TargetType="CheckBox">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+        </Style>
+
+        <Style x:Key="SaveRadioButton" TargetType="RadioButton">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+        </Style>
+
+        <Style x:Key="SaveButton" TargetType="Button" BasedOn="{StaticResource ButtonDefault}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="SavePrimaryButton" TargetType="Button" BasedOn="{StaticResource ButtonPrimary}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinWidth" Value="130" />
+            <Setter Property="Padding" Value="18,0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <controls:WindowCaptionBar DockPanel.Dock="Top" ShowMinimizeMaximize="False" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0"
+                    Padding="18,14"
+                    Background="{DynamicResource DarkRegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1">
+                <StackPanel>
+                    <TextBlock Text="LƯU PHIÊN RA THƯ MỤC"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}" />
+                    <TextBlock Margin="0,3,0,0"
+                               FontSize="11"
+                               Foreground="{DynamicResource ThirdlyTextBrush}"
+                               Text="Chép tệp của các phiên (kèm VAL_XML) sang thư mục ngoài" />
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="18,14,18,18">
+                    <TextBlock Style="{StaticResource SaveFieldLabel}" Text="Thư mục lưu" />
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right"
+                                Margin="8,0,0,0"
+                                Padding="14,0"
+                                Height="34"
+                                Content="Chọn..."
+                                Command="{Binding BrowseCommand}"
+                                Style="{StaticResource SaveButton}" />
+                        <hc:TextBox Style="{StaticResource SaveTextBox}"
+                                    Text="{Binding Destination, UpdateSourceTrigger=PropertyChanged}"
+                                    ToolTip="Thư mục sẽ nhận các tệp được lưu" />
+                    </DockPanel>
+                    <TextBlock Margin="0,16,0,0"
+                               Style="{StaticResource SaveFieldLabel}"
+                               Text="Phạm vi" />
+                    <RadioButton Style="{StaticResource SaveRadioButton}"
+                                 Content="Các phiên được tick ở bảng Phiên"
+                                 IsChecked="{Binding ScopeIsSelected, Mode=TwoWay}" />
+                    <RadioButton Style="{StaticResource SaveRadioButton}"
+                                 Content="Các phiên đang hiển thị ở bảng Phiên"
+                                 IsChecked="{Binding ScopeIsVisible, Mode=TwoWay}" />
+                    <RadioButton Style="{StaticResource SaveRadioButton}"
+                                 Content="Toàn bộ kết quả truy vấn (không giới hạn trang)"
+                                 IsChecked="{Binding ScopeIsFull, Mode=TwoWay}" />
+
+                    <TextBlock Margin="0,16,0,0"
+                               Style="{StaticResource SaveFieldLabel}"
+                               Text="Tùy chọn" />
+                    <CheckBox Style="{StaticResource SaveCheckBox}"
+                              Content="Tạo thư mục con theo từng phiên"
+                              IsChecked="{Binding MakeSessionFolder, Mode=TwoWay}" />
+                    <CheckBox Style="{StaticResource SaveCheckBox}"
+                              Content="Lưu kèm VAL_XML (header của phiên)"
+                              IsChecked="{Binding SaveHeader, Mode=TwoWay}" />
+                    <CheckBox Style="{StaticResource SaveCheckBox}"
+                              Content="Ghi đè nếu trùng tên tệp"
+                              IsChecked="{Binding Overwrite, Mode=TwoWay}" />
+                    <CheckBox Style="{StaticResource SaveCheckBox}"
+                              Content="Tự đóng cửa sổ sau khi lưu xong"
+                              IsChecked="{Binding CloseAfterCopy, Mode=TwoWay}" />
+                    <CheckBox Style="{StaticResource SaveCheckBox}"
+                              Content="Đổi tên tệp theo thời gian DT_START (12:20:23 → 12.20.23)"
+                              IsChecked="{Binding RenameByTime, Mode=TwoWay}"
+                              ToolTip="Khi tick, mỗi tệp được đặt lại tên theo giờ bắt đầu DT_START của chính nó; trùng giờ thì tự đánh số (2), (3)..." />
+
+                    <TextBlock Margin="0,16,0,0"
+                               Style="{StaticResource SaveFieldLabel}"
+                               Text="Lọc đuôi tệp" />
+                    <CheckBox Style="{StaticResource SaveCheckBox}"
+                              Content="Chỉ lưu các đuôi tệp được chọn"
+                              IsChecked="{Binding UseExtensionFilter, Mode=TwoWay}" />
+                    <hc:ComboBox Margin="0,8,0,0"
+                                 Style="{StaticResource SaveComboBox}"
+                                 ItemsSource="{Binding ExtensionOptions}"
+                                 SelectedItem="{Binding ExtensionFilter, Mode=TwoWay}"
+                                 IsEnabled="{Binding UseExtensionFilter, Mode=OneWay}"
+                                 ToolTip="Nhóm đuôi tệp cần giữ lại khi lưu" />
+                    <TextBlock Style="{StaticResource SaveHint}"
+                               Text="Bỏ chọn để lưu tất cả tệp trong phiên." />
+
+                    <StackPanel Visibility="{Binding IsBusy, Converter={StaticResource Boolean2VisibilityConverter}}">
+                        <TextBlock Margin="0,16,0,0"
+                                   Style="{StaticResource SaveFieldLabel}"
+                                   Text="Tiến độ" />
+                        <ProgressBar Height="10"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="{Binding TotalPercent, Mode=OneWay}"
+                                     ToolTip="{Binding TotalPercent, StringFormat={}{0:0.#}%}" />
+                        <TextBlock Margin="0,6,0,0"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource ThirdlyTextBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Text="{Binding CurrentFile}" />
+                        <TextBlock Margin="0,2,0,0"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Text="{Binding ProgressText}" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            <Border Grid.Row="2"
+                    Padding="18,12"
+                    Background="{DynamicResource DarkRegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0">
+                <DockPanel LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left"
+                               VerticalAlignment="Center"
+                               FontSize="11"
+                               MaxWidth="300"
+                               Foreground="{DynamicResource ThirdlyTextBrush}"
+                               Text="{Binding Destination}"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding Destination}" />
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Content="Đóng"
+                                Command="{Binding CloseCommand}"
+                                Style="{StaticResource SaveButton}" />
+                        <Button Content="Bắt đầu lưu"
+                                Command="{Binding StartCopyCommand}"
+                                Style="{StaticResource SavePrimaryButton}"
+                                AutomationProperties.AutomationId="StartSaveSessionsButton" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

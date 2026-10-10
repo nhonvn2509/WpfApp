@@ -1,0 +1,99 @@
+<Window x:Class="WpfApp.Views.FileDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:controls="clr-namespace:WpfApp.Views.Controls"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="{Binding Title}"
+        Icon="/Assets/VSAT.ico"
+        Width="1000"
+        Height="720"
+        MinWidth="520"
+        MinHeight="360"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource RegionBrush}"
+        Foreground="{DynamicResource PrimaryTextBrush}"
+        FontFamily="Segoe UI"
+        mc:Ignorable="d">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="40"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            ResizeBorderThickness="6"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <DockPanel>
+        <controls:WindowCaptionBar DockPanel.Dock="Top" />
+        <Border DockPanel.Dock="Top"
+                Margin="12,12,12,0"
+                Padding="10"
+                Background="{DynamicResource SecondaryRegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+            <DockPanel>
+                <Button DockPanel.Dock="Right"
+                        Content="Đóng"
+                        IsCancel="True"
+                        Click="Close_Click"
+                        Style="{StaticResource TableToolButton}"
+                        ContentTemplate="{StaticResource IconTextContentTemplate}"
+                        Tag="X" />
+                <Button DockPanel.Dock="Right"
+                        Content="Chép toàn bộ"
+                        Click="CopyAll_Click"
+                        Style="{StaticResource TablePrimaryButton}"
+                        ContentTemplate="{StaticResource IconTextContentTemplate}"
+                        Tag="Copy"
+                        ToolTip="Chép toàn bộ thông tin chi tiết vào clipboard" />
+                <TextBlock Text="{Binding Title}"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource PrimaryTextBrush}" />
+            </DockPanel>
+        </Border>
+        <ScrollViewer Margin="12"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="{Binding Subtitle}"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource ThirdlyTextBrush}"
+                           Margin="0,0,0,14"
+                           Visibility="{Binding HasSubtitle, Converter={StaticResource BoolToVisibility}}" />
+                <ItemsControl ItemsSource="{Binding Groups}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <hc:Card Margin="0,0,0,12"
+                                     Header="{Binding Name}">
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,3">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="220" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="{DynamicResource ThirdlyTextBrush}" />
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding Value}"
+                                                           TextWrapping="Wrap" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </hc:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

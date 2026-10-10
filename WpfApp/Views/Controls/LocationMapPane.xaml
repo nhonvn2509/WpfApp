@@ -1,0 +1,34 @@
+<UserControl x:Class="WpfApp.Views.Controls.LocationMapPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf">
+    <Grid>
+        <Border Style="{StaticResource SurfacePanel}">
+            <mapsui:MapControl x:Name="MapControl" />
+        </Border>
+        <Button HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="8"
+                Padding="10,5"
+                Content="Mở rộng"
+                Click="ExpandMap_Click"
+                Style="{StaticResource TableToolButton}"
+                ToolTip="Mở bản đồ trong cửa sổ lớn" />
+        <TextBlock x:Name="EmptyLocationText"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Margin="12"
+                   Style="{StaticResource TableEmptyStateText}"
+                   Text="Không tìm thấy cặp tọa độ vĩ độ/kinh độ trong dữ liệu vị trí."
+                   Visibility="Collapsed" />
+        <TextBlock x:Name="MapStatusText"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="12"
+                   Padding="8,5"
+                   Background="#EFFFFFFF"
+                   Foreground="{DynamicResource PrimaryTextBrush}"
+                   TextWrapping="Wrap"
+                   Visibility="Collapsed" />
+    </Grid>
+</UserControl>

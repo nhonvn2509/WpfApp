@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="WpfApp.Views.Controls.CommandBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:iconPacks="clr-namespace:MahApps.Metro.IconPacks;assembly=MahApps.Metro.IconPacks.Lucide"
+             xmlns:controls="clr-namespace:WpfApp.Views.Controls">
+    <Border Style="{StaticResource CommandBarPanel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer x:Name="CommandHost"
+                          Grid.Column="0"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Left"
+                          Style="{StaticResource HorizontalFilterScrollViewer}">
+                <StackPanel Orientation="Horizontal">
+                <ToggleButton Style="{StaticResource PaneToggleButton}"
+                              IsChecked="{Binding IsNavPaneOpen, Mode=TwoWay}"
+                              ToolTip="Ẩn / hiện cột điều hướng bên trái"
+                              AutomationProperties.AutomationId="ToggleNavPane">
+                    <iconPacks:PackIconLucide Kind="PanelLeft" Width="16" Height="16" />
+                </ToggleButton>
+
+                <ToggleButton Style="{StaticResource PaneToggleButton}"
+                              IsChecked="{Binding IsSidePaneOpen, Mode=TwoWay}"
+                              ToolTip="Ẩn / hiện cột chi tiết bên phải"
+                              AutomationProperties.AutomationId="ToggleSidePane">
+                    <iconPacks:PackIconLucide Kind="PanelRight" Width="16" Height="16" />
+                </ToggleButton>
+
+                <Rectangle Width="1" Margin="6,4" Fill="{DynamicResource BorderBrush}" />
+
+                <controls:BestFitButton Content="Căn cột"
+                                        Style="{StaticResource CommandBarButton}"
+                                        ContentTemplate="{StaticResource IconTextContentTemplate}"
+                                        Tag="Maximize"
+                                        ToolTip="Căn cột vừa cả tiêu đề và nội dung" />
+
+                <Rectangle Width="1" Margin="6,4" Fill="{DynamicResource BorderBrush}" />
+
+                <ToggleButton Content="Cho phép chọn"
+                              IsChecked="{Binding ActiveCanSelect, Mode=TwoWay}"
+                              Style="{StaticResource CommandBarToggle}"
+                              ContentTemplate="{StaticResource IconTextContentTemplate}"
+                              Tag="CheckCheck"
+                              ToolTip="Bật/tắt cho phép chọn dòng" />
+
+                <Rectangle Width="1" Margin="6,4" Fill="{DynamicResource BorderBrush}" />
+
+                <Button Content="Lưu phiên"
+                        Command="{Binding OpenSaveSessionsCommand}"
+                        Style="{StaticResource CommandBarButton}"
+                        ContentTemplate="{StaticResource IconTextContentTemplate}"
+                        Tag="Save"
+                        ToolTip="Lưu các phiên ra thư mục ngoài (Save to)" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <TextBlock Grid.Column="1"
+                       Margin="14,0"
+                       VerticalAlignment="Center"
+                       FontSize="{StaticResource FontSizeCaption}"
+                       Foreground="{DynamicResource ThirdlyTextBrush}"
+                       TextTrimming="CharacterEllipsis"
+                       Text="{Binding ActiveSelectionText}" />
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Margin="8,0,0,0"
+                        Command="{Binding OpenSettingsCommand}"
+                        Style="{StaticResource CommandBarButton}"
+                        Padding="8,0"
+                        ToolTip="Cài đặt ứng dụng"
+                        AutomationProperties.AutomationId="OpenSettingsButton">
+                    <iconPacks:PackIconLucide Kind="Settings" Width="16" Height="16" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

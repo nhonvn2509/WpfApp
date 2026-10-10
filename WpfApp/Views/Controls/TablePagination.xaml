@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="WpfApp.Views.Controls.TablePagination"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol">
+    <Border Style="{StaticResource TablePaginationPanel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <hc:Pagination Grid.Column="1"
+                           MaxPageCount="{Binding PaginationMaxPageCount}"
+                           PageIndex="{Binding PageIndex, Mode=OneWay}"
+                           DataCountPerPage="{Binding PageSize}"
+                           MaxPageInterval="5"
+                           IsJumpEnabled="True"
+                           AutoHiding="False"
+                           IsEnabled="{Binding IsPagingEnabled}"
+                           VerticalAlignment="Center">
+                <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="PageUpdated">
+                        <hc:EventToCommand Command="{Binding PageUpdatedCommand}" PassEventArgsToCommand="True" />
+                    </hc:EventTrigger>
+                </hc:Interaction.Triggers>
+            </hc:Pagination>
+        </Grid>
+    </Border>
+</UserControl>

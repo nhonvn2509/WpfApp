@@ -1,0 +1,27 @@
+namespace WpfApp.Models.Files;
+
+public sealed record FileDetailRecord(
+    long IdF,
+    long IdS,
+    byte DayFgr,
+    DateTime? Start,
+    int? Fn,
+    int? Fp,
+    string? PathName,
+    string? ShortName,
+    string? Extension,
+    long? Length,
+    int? Priority,
+    byte? UserSelected,
+    int? StatusId,
+    int? TypeId,
+    int? SaveId,
+    int? LanguageId,
+    int? Quality,
+    short? StorageId,
+    bool? Exists,
+    Guid? Md5,
+    string? Xml,
+    string? StatusName,
+    string? TypeName,
+    string? SessionName);

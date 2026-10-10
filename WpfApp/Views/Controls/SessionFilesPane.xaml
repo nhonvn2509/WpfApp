@@ -1,0 +1,163 @@
+<UserControl x:Class="WpfApp.Views.Controls.SessionFilesPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewControls="clr-namespace:WpfApp.Views.Controls">
+    <Grid Margin="12,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="{Binding SessionTitle}"
+                       Style="{StaticResource TableSectionTitle}"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding SessionTitle}" />
+            <TextBlock Text="{Binding SessionSubtitle}"
+                       Margin="0,2,0,0"
+                       FontSize="{StaticResource FontSizeCaption}"
+                       TextTrimming="CharacterEllipsis"
+                       Foreground="{DynamicResource ThirdlyTextBrush}"
+                       ToolTip="{Binding SessionSubtitle}" />
+        </StackPanel>
+
+        <Border Grid.Row="1"
+                Margin="0,0,0,10"
+                Padding="10,8"
+                Style="{StaticResource SurfaceCard}"
+                Visibility="{Binding HasDossier, Converter={StaticResource Boolean2VisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Text="Hồ sơ phiên"
+                           Style="{StaticResource MetadataSectionTitle}"
+                           Margin="0,0,0,6" />
+                <ItemsControl ItemsSource="{Binding DossierItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="104" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource ThirdlyTextBrush}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Value}"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Value}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <TabControl ItemsSource="{Binding MetadataSections}"
+                        SelectedIndex="{Binding SelectedMetadataTabIndex, Mode=TwoWay}"
+                        Background="Transparent"
+                        BorderThickness="0">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Title}" FontSize="{StaticResource FontSizeBody}" />
+                        <TextBlock Text="{Binding Rows.Count, StringFormat= ({0:N0})}"
+                                   FontSize="{StaticResource FontSizeCaption}"
+                                   Margin="4,0,0,0"
+                                   Foreground="{DynamicResource ThirdlyTextBrush}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ItemContainerStyle>
+                <!-- Phải BasedOn style có Template (WorkspaceTabItem): style cục bộ không Template
+                     sẽ thay style ngầm HandyControl và rơi về template WPF hệ thống nền trắng. -->
+                <Style TargetType="TabItem" BasedOn="{StaticResource WorkspaceTabItem}">
+                    <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+                    <Setter Property="Padding" Value="10,6" />
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <viewControls:LocationMapPane Grid.Row="0"
+                                                      Height="240"
+                                                      Margin="0,0,0,8">
+                            <viewControls:LocationMapPane.Style>
+                                <Style TargetType="viewControls:LocationMapPane">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName}" Value="geolocation">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </viewControls:LocationMapPane.Style>
+                        </viewControls:LocationMapPane>
+                        <Border Grid.Row="1" Style="{StaticResource SurfacePanel}">
+                            <DataGrid ItemsSource="{Binding Rows}"
+                                      Style="{StaticResource MetadataGrid}"
+                                      Loaded="MetadataGrid_Loaded"
+                                      DataContextChanged="MetadataGrid_DataContextChanged"
+                                      Unloaded="MetadataGrid_Unloaded"
+                                      SelectionChanged="MetadataGrid_SelectionChanged"
+                                      PreviewMouseLeftButtonUp="MetadataGrid_PreviewMouseLeftButtonUp" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+            </TabControl>
+            <Border HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource RegionBrush}"
+                    Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            MinWidth="220">
+                    <TextBlock HorizontalAlignment="Center"
+                               Margin="0,0,0,12"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               FontWeight="SemiBold"
+                               Text="Đang tải dữ liệu phiên..." />
+                    <ProgressBar Height="6"
+                                 IsIndeterminate="True"
+                                 Foreground="{DynamicResource PrimaryBrush}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="2"
+                   Text="{Binding MetadataEmptyMessage}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource TableEmptyStateText}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMetadataEmpty}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <TextBlock Grid.Row="3"
+                   Margin="0,8,0,0"
+                   VerticalAlignment="Bottom"
+                   FontSize="{StaticResource FontSizeCaption}"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource ThirdlyTextBrush}"
+                   Text="{Binding StatusText}"
+                   ToolTip="{Binding StatusText}" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,130 @@
+<UserControl x:Class="WpfApp.Views.Tables.ChainsTableView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:viewControls="clr-namespace:WpfApp.Views.Controls"
+             xmlns:xceed="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit">
+    <Grid DataContext="{Binding Chains}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource TableFilterCard}">
+            <ScrollViewer Style="{StaticResource HorizontalFilterScrollViewer}">
+                <ScrollViewer.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ThinScrollBar}" />
+                </ScrollViewer.Resources>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource TableLabel}" Text="Tìm kiếm" />
+                    <hc:TextBox Style="{StaticResource TableSearchBox}"
+                                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Tìm hồ sơ, modem, vệ tinh, thiết bị hoặc mô tả; tự tìm sau 1,5 giây ngừng nhập"
+                                 AutomationProperties.AutomationId="ChainsSearchBox" />
+                    <StackPanel Orientation="Horizontal" Margin="8,6,8,6">
+                        <TextBlock Style="{StaticResource TableLabel}" Text="Từ ngày" />
+                        <xceed:DateTimePicker Value="{Binding FromDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource TableDateTimePicker}"
+                                              AutomationProperties.AutomationId="ChainsFromDate"
+                                              ToolTip="Tự lọc sau khi chọn thời điểm" />
+                        <TextBlock Style="{StaticResource TableLabel}" Text="Đến ngày" />
+                        <xceed:DateTimePicker Value="{Binding ToDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource TableDateTimePicker}"
+                                              AutomationProperties.AutomationId="ChainsToDate"
+                                              ToolTip="Tự lọc sau khi chọn thời điểm" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding DateRangeValidationMessage}"
+                               Foreground="{DynamicResource DangerBrush}"
+                               VerticalAlignment="Center"
+                               Margin="4,0,8,0"
+                               Visibility="{Binding HasInvalidDateRange, Converter={StaticResource Boolean2VisibilityConverter}}"
+                               AutomationProperties.AutomationId="ChainsDateRangeValidation" />
+                    <Button Content="Khai thác"
+                            Command="{Binding DataContext.ExploitChainsCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                            Style="{StaticResource ExploitButton}"
+                            ContentTemplate="{StaticResource IconTextContentTemplate}"
+                            Tag="Radar"
+                            AutomationProperties.AutomationId="ExploitChainsButton"
+                            ToolTip="Khai thác các nguồn đã chọn hoặc nguồn đang hiển thị" />
+                    <Button Content="Đặt lại"
+                            Command="{Binding ClearFilterCommand}"
+                            Style="{StaticResource TableToolButton}"
+                            ContentTemplate="{StaticResource IconTextContentTemplate}"
+                            Tag="X"
+                            AutomationProperties.AutomationId="ChainsResetFiltersButton"
+                            ToolTip="Đặt lại tìm kiếm và khoảng thời gian mặc định" />
+                    <Button Content="Làm mới"
+                            Command="{Binding RefreshCommand}"
+                            Style="{StaticResource TableToolButton}"
+                            ContentTemplate="{StaticResource IconTextContentTemplate}"
+                            Tag="RefreshCw"
+                            AutomationProperties.AutomationId="ChainsRefreshButton"
+                            ToolTip="Tải lại danh sách nguồn hiện tại" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                      RowStyle="{StaticResource TableRowStyle}"
+                      ColumnHeaderStyle="{StaticResource TableColumnHeaderStyle}"
+                      viewControls:SelectionCheckBoxColumn.Visible="{Binding CanSelect}">
+                <DataGrid.Style>
+                    <Style TargetType="DataGrid" BasedOn="{StaticResource TableGrid}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Style>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="40"
+                                            CellTemplate="{StaticResource RowSelectionCheckBox}"
+                                            HeaderTemplate="{StaticResource RowSelectionHeaderCheckBox}"
+                                            HeaderStyle="{StaticResource SelectionCheckBoxColumnHeaderStyle}" />
+                    <DataGridTextColumn Width="110" Binding="{Binding Frequency}" Header="Tần số" />
+                    <DataGridTemplateColumn Width="140" CellTemplate="{StaticResource ChainProfileCellTemplate}" Header="Hồ sơ" />
+                    <DataGridTextColumn Width="110" Binding="{Binding Modem}" Header="Modem" />
+                    <DataGridTemplateColumn Width="120" CellTemplate="{StaticResource ChainSourceCellTemplate}" Header="Nguồn" />
+                    <DataGridTemplateColumn Width="120" CellTemplate="{StaticResource ChainSatelliteCellTemplate}" Header="Vệ tinh" />
+                    <DataGridTextColumn Width="80" Binding="{Binding Band}" Header="Băng" />
+                    <DataGridTextColumn Width="80" Binding="{Binding Polarization}" Header="Phân cực" />
+                    <DataGridTextColumn Width="90" Binding="{Binding Modulation}" Header="Điều chế" />
+                    <DataGridTextColumn Width="125" Binding="{Binding Equipment}" Header="Thiết bị" />
+                    <DataGridTextColumn Width="100" Binding="{Binding DirectionFrom}" Header="Hướng từ" />
+                    <DataGridTextColumn Width="100" Binding="{Binding DirectionTo}" Header="Hướng đến" />
+                    <DataGridTextColumn Width="100" Binding="{Binding Sessions}" Header="Số phiên" />
+                    <DataGridTextColumn Width="240" Binding="{Binding Description}" Header="Mô tả" />
+                    <DataGridTextColumn Width="150" Binding="{Binding Inserted, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" Header="Ngày tạo" />
+                    <DataGridTextColumn Width="150" Binding="{Binding Updated, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" Header="Ngày cập nhật" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Style="{StaticResource TableEmptyStateText}"
+                       Text="{Binding EmptyStateMessage}"
+                       Visibility="{Binding IsEmpty, Converter={StaticResource Boolean2VisibilityConverter}}" />
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Padding="20,16"
+                    Background="{DynamicResource SecondaryRegionBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Visibility="{Binding IsLoading, Converter={StaticResource Boolean2VisibilityConverter}}">
+                <StackPanel MinWidth="220">
+                    <TextBlock HorizontalAlignment="Center"
+                               Margin="0,0,0,12"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               FontWeight="SemiBold"
+                               Text="Đang tải danh sách nguồn..." />
+                    <ProgressBar Height="6"
+                                 IsIndeterminate="True"
+                                 Foreground="{DynamicResource PrimaryBrush}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        <viewControls:TablePagination Grid.Row="2" />
+    </Grid>
+</UserControl>
